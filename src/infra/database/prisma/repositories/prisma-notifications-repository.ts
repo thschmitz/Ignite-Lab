@@ -1,40 +1,20 @@
-import { NotificationsRepository } from '@application/repositories/notifications-repository';
-import { Notification } from '@application/entities/notification';
-import { PrismaService } from '../prisma.service';
 import { Injectable } from '@nestjs/common';
-import { PrismaNotificationMapper } from '../mapper/prisma-notification-mapper';
+import { Notification } from '@application/entities/notification';
+import { NotificationsRepository } from '@application/repositories/notifications-repository';
+import { PrismaService } from '../prisma.service';
+import { PrismaNotificationMapper } from '@infra/database/prisma/mapper/prisma-notification-mapper';
 
 @Injectable()
 export class PrismaNotificationsRepository implements NotificationsRepository {
-  constructor(private prismaService: PrismaService) {}
-
-  async countManyByRecipientId(recipientId: string): Promise<number> {
-    const count = await this.prismaService.notification.count({
-      where: {
-        recipientId: recipientId,
-      },
-    });
-
-    return count;
-  }
-  async findManyByRecipientId(recipientId: string): Promise<Notification[]> {
-    const notifications = await this.prismaService.notification.findMany({
-      where: {
-        recipientId: recipientId,
-      },
-    });
-
-    return notifications.map((notification) => {
-      return PrismaNotificationMapper.toDomain(notification);
-    });
-  }
+  constructor(private prisma: PrismaService) {}
 
   async findById(notificationId: string): Promise<Notification | null> {
-    const notification = await this.prismaService.notification.findUnique({
+    const notification = await this.prisma.notification.findUnique({
       where: {
         id: notificationId,
       },
     });
+    console.log(notification);
 
     if (!notification) {
       return null;
@@ -43,20 +23,41 @@ export class PrismaNotificationsRepository implements NotificationsRepository {
     return PrismaNotificationMapper.toDomain(notification);
   }
 
-  async save(notification: Notification): Promise<void> {
-    const raw = PrismaNotificationMapper.toPrisma(notification);
-
-    await this.prismaService.notification.update({
+  async findManyByRecipientId(recipientId: string): Promise<Notification[]> {
+    const notifications = await this.prisma.notification.findMany({
       where: {
-        id: raw.id,
+        recipientId,
       },
-      data: raw,
     });
+
+    return notifications.map(PrismaNotificationMapper.toDomain);
+  }
+
+  async countManyByRecipientId(recipientId: string): Promise<number> {
+    const count = await this.prisma.notification.count({
+      where: {
+        recipientId,
+      },
+    });
+
+    return count;
   }
 
   async create(notification: Notification): Promise<void> {
     const raw = PrismaNotificationMapper.toPrisma(notification);
-    await this.prismaService.notification.create({
+
+    await this.prisma.notification.create({
+      data: raw,
+    });
+  }
+
+  async save(notification: Notification): Promise<void> {
+    const raw = PrismaNotificationMapper.toPrisma(notification);
+
+    await this.prisma.notification.update({
+      where: {
+        id: raw.id,
+      },
       data: raw,
     });
   }

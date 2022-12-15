@@ -10,6 +10,7 @@ export class PrismaNotificationMapper {
       content: notification.content.value,
       recipientId: notification.recipientId,
       readAt: notification.readAt,
+      canceledAt: notification.canceledAt,
       createdAt: notification.createdAt,
     };
   }
@@ -21,6 +22,7 @@ export class PrismaNotificationMapper {
         category: raw.category,
         content: new Content(raw.content),
         recipientId: raw.recipientId,
+        readAt: raw.readAt,
         canceledAt: raw.canceledAt,
         createdAt: raw.createdAt,
       },
