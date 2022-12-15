@@ -29,6 +29,8 @@ export class SendNotification {
       category,
     });
 
+    console.log(notification);
+
     // Persistir a notificacao no banco de dados
     await this.notificationsRepository.create(notification);
 

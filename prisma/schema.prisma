@@ -16,6 +16,7 @@ model Notification {
   content     String
   category    String
   readAt      DateTime?
+  canceledAt  DateTime?
   createdAt   DateTime  @default(now())
 
   @@index([recipientId]) // Estou falando que todos os dados estao dentro desse campo Index, para tranquilizar posteriormente a Query que fizermos.

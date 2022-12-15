@@ -1,10 +1,17 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, Get } from '@nestjs/common';
 import { CreateNotificationBody } from '../dtos/create-notification-body';
 import { SendNotification } from 'src/application/use-cases/send-notification';
+import { NotificationMapper } from '../mapper/notification-mapper';
 
 @Controller('notifications')
 export class NotificationsController {
   constructor(private sendNotification: SendNotification) {}
+
+  @Get()
+  getHello() {
+    console.log('Hello');
+    return 'Hello World!';
+  }
 
   @Post()
   async create(@Body() body: CreateNotificationBody) {
@@ -17,6 +24,10 @@ export class NotificationsController {
       category,
     });
 
-    return { notification };
+    const raw = NotificationMapper.toHTTP(notification);
+
+    return {
+      notification: raw,
+    };
   }
 }

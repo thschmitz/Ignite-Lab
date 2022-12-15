@@ -4,7 +4,7 @@ import { HttpModule } from './infra/http/http.module';
 
 // Acomplador de servicos e de controladores
 @Module({
-  imports: [DatabaseModule],
+  imports: [HttpModule, DatabaseModule],
 })
 export class AppModule {}
 
