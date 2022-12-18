@@ -3,6 +3,7 @@ import { CountRecipientNotification } from '@application/use-cases/count-recipie
 import { GetRecipientNotifications } from '@application/use-cases/get-recipient-notifications';
 import { ReadNotification } from '@application/use-cases/read-notification';
 import { UnreadNotification } from '@application/use-cases/unread-notification';
+import { UpdateNotification } from '@application/use-cases/update-notification';
 import { Module } from '@nestjs/common';
 import { SendNotification } from 'src/application/use-cases/send-notification';
 import { DatabaseModule } from '../database/database.module';
@@ -18,6 +19,7 @@ import { NotificationsController } from './controllers/notifications.controller'
     UnreadNotification,
     CountRecipientNotification,
     GetRecipientNotifications,
+    UpdateNotification,
   ],
 })
 export class HttpModule {}

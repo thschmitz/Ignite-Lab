@@ -1,5 +1,5 @@
 // Mudei aqui tmb
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Put } from '@nestjs/common';
 import { SendNotification } from '@application/use-cases/send-notification';
 import { CreateNotificationBody } from '../dtos/create-notification-body';
 import { NotificationMapper } from '@infra/http/mapper/notification-mapper';
@@ -8,6 +8,7 @@ import { ReadNotification } from '@application/use-cases/read-notification';
 import { UnreadNotification } from '@application/use-cases/unread-notification';
 import { CountRecipientNotification } from '@application/use-cases/count-recipient-notifications';
 import { GetRecipientNotifications } from '@application/use-cases/get-recipient-notifications';
+import { UpdateNotification } from '@application/use-cases/update-notification';
 
 @Controller('notifications')
 export class NotificationsController {
@@ -18,11 +19,19 @@ export class NotificationsController {
     private unreadNotification: UnreadNotification,
     private countRecipientNotifications: CountRecipientNotification,
     private getRecipientNotifications: GetRecipientNotifications,
+    private updateNotification: UpdateNotification,
   ) {}
 
   @Patch(':id/cancel')
   async cancel(@Param('id') id: string) {
     await this.cancelNotification.execute({
+      notificationId: id,
+    });
+  }
+
+  @Put(':id/update')
+  async update(@Param('id') id: string) {
+    await this.updateNotification.execute({
       notificationId: id,
     });
   }

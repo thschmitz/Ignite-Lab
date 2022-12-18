@@ -14,7 +14,6 @@ export class PrismaNotificationsRepository implements NotificationsRepository {
         id: notificationId,
       },
     });
-    console.log(notification);
 
     if (!notification) {
       return null;
