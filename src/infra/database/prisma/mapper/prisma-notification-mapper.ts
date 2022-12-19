@@ -31,6 +31,18 @@ export class PrismaNotificationMapper {
     };
   }
 
+  static updateToDomain(notification: any, body: UpdateNotificationBody) {
+    return {
+      id: notification.id,
+      category: body.category || notification.category,
+      content: new Content(body.content) || new Content(notification.content),
+      recipientId: body.recipientId || notification.recipientId,
+      readAt: notification.readAt,
+      canceledAt: notification.canceledAt,
+      createdAt: notification.createdAt,
+    };
+  }
+
   //Notificacao do prisma para a camada das entidades
   static toDomain(raw: rawNotification): Notification {
     return new Notification(
