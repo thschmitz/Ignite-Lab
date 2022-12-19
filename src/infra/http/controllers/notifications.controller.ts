@@ -9,6 +9,8 @@ import { UnreadNotification } from '@application/use-cases/unread-notification';
 import { CountRecipientNotification } from '@application/use-cases/count-recipient-notifications';
 import { GetRecipientNotifications } from '@application/use-cases/get-recipient-notifications';
 import { UpdateNotification } from '@application/use-cases/update-notification';
+import { UpdateNotificationBody } from '../dtos/update-notification-body';
+import { GetAllNotifications } from '@application/use-cases/get-all-notifications';
 
 @Controller('notifications')
 export class NotificationsController {
@@ -20,6 +22,7 @@ export class NotificationsController {
     private countRecipientNotifications: CountRecipientNotification,
     private getRecipientNotifications: GetRecipientNotifications,
     private updateNotification: UpdateNotification,
+    private getAllNotifications: GetAllNotifications,
   ) {}
 
   @Patch(':id/cancel')
@@ -30,10 +33,18 @@ export class NotificationsController {
   }
 
   @Put(':id/update')
-  async update(@Param('id') id: string) {
-    await this.updateNotification.execute({
-      notificationId: id,
-    });
+  async update(@Param('id') id: string, @Body() body: UpdateNotificationBody) {
+    const { recipientId, content, category } = body;
+    await this.updateNotification.execute(
+      {
+        notificationId: id,
+      },
+      {
+        recipientId,
+        content,
+        category,
+      },
+    );
   }
 
   @Get('count/from/:recipientId')
@@ -52,6 +63,15 @@ export class NotificationsController {
     const { notifications } = await this.getRecipientNotifications.execute({
       recipientId,
     });
+
+    return {
+      notifications: notifications.map(NotificationMapper.toHTTP),
+    };
+  }
+
+  @Get()
+  async getNotifications() {
+    const { notifications } = await this.getAllNotifications.execute();
 
     return {
       notifications: notifications.map(NotificationMapper.toHTTP),

@@ -3,6 +3,7 @@ import { Notification } from '@application/entities/notification';
 import { NotificationsRepository } from '@application/repositories/notifications-repository';
 import { PrismaService } from '../prisma.service';
 import { PrismaNotificationMapper } from '@infra/database/prisma/mapper/prisma-notification-mapper';
+import { UpdateNotificationBody } from '@infra/http/dtos/update-notification-body';
 
 @Injectable()
 export class PrismaNotificationsRepository implements NotificationsRepository {
@@ -32,6 +33,12 @@ export class PrismaNotificationsRepository implements NotificationsRepository {
     return notifications.map(PrismaNotificationMapper.toDomain);
   }
 
+  async findMany(): Promise<Notification[]> {
+    const notifications = await this.prisma.notification.findMany();
+
+    return notifications.map(PrismaNotificationMapper.toDomain);
+  }
+
   async countManyByRecipientId(recipientId: string): Promise<number> {
     const count = await this.prisma.notification.count({
       where: {
@@ -46,6 +53,20 @@ export class PrismaNotificationsRepository implements NotificationsRepository {
     const raw = PrismaNotificationMapper.toPrisma(notification);
 
     await this.prisma.notification.create({
+      data: raw,
+    });
+  }
+
+  async update(
+    notification: Notification,
+    body: UpdateNotificationBody,
+  ): Promise<void> {
+    const raw = PrismaNotificationMapper.updateToPrisma(notification, body);
+
+    await this.prisma.notification.update({
+      where: {
+        id: raw.id,
+      },
       data: raw,
     });
   }
